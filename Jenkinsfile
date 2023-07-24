@@ -31,5 +31,12 @@ pipeline {
                 sh "docker push ${ECR_REPOSITORY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
             }
         }
+        // Deploy to ECS - Terraform
+
+        // Build Webserver 
+
+        // Push to ECR Public
+
+        // Deploy to ECS - Terraform
     }
 }
