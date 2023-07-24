@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('Checkout SCM') {
             steps {
-                git "https://github.com/jonspandorf/panaya_project.git"
+                git(["https://github.com/jonspandorf/panaya_project.git", branch: 'master'])
             }
         }
         stage('docker login') {
@@ -24,10 +24,7 @@ pipeline {
         
         stage('build image') {
             steps {
-                dir('./panaya_project/mysql') {
-                    sh 'ls'
-                    sh "docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ."
-                }    
+                 sh "docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ./mysql"
             }
         }
         stage('ECR Tag and push') {
