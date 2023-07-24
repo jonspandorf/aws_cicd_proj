@@ -50,7 +50,8 @@ pipeline {
         }
         stage('Deploy DB') {
             steps {
-                sh "docker run --rm -i --volumes-from ${JENKINS_CONTAINER_NAME} hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/mysql apply -var VPC_ID=${param.VPC_ID} -var ECS_NAME=${param.ECS_NAME} -var MYSQL_DATABASE=${param.MYSQL_DB} -var MYSQL_ROOT_PASSWORD=${param.MYSQL_PASS} -auto-approve"
+                sh 'sleep 10'
+                sh "docker run --name tf_deploy --rm -i --volumes-from ${JENKINS_CONTAINER_NAME} hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/mysql apply -var VPC_ID=${param.VPC_ID} -var ECS_NAME=${param.ECS_NAME} -var MYSQL_DATABASE=${param.MYSQL_DB} -var MYSQL_ROOT_PASSWORD=${param.MYSQL_PASS} -auto-approve"
             }
 
         }
