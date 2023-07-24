@@ -1,5 +1,0 @@
-VPC_ID=${params.VPC_ID}
-ECS_NAME=${params.ECS_NAME}
-MYSQL_DB=${params.MYSQL_DB}
-MYSQL_USER=${params.MYSQL_USER}
-MYSQL_PASS=${params.MYSQL_PASS}
