@@ -25,7 +25,8 @@ pipeline {
         stage('build image') {
             steps {
                 dir('./panaya_project/mysql') {
-                    sh "docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+                    sh 'ls'
+                    sh "docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ."
                 }    
             }
         }
