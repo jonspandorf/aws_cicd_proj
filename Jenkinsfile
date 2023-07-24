@@ -42,15 +42,21 @@ pipeline {
                 sh "docker push ${ECR_DB_REPOSITORY}/${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
             }
         }
-        stage('Deploy DB') {
+        stage('Prepare DB deploy') {
             steps {
                 sh "ls -lhtra"
                 sh "docker run --rm -i --volumes-from ${JENKINS_CONTAINER_NAME} hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/mysql init"
+            }
+        }
+        stage('Deploy DB') {
+            steps {
                 sh "docker run --rm -i --volumes-from ${JENKINS_CONTAINER_NAME} hashicorp/terraform -chdir/var/jenkins_home/workspace/my_deployment/mysql apply -var VPC_ID=${param.VPC_ID} -var ECS_NAME=${param.ECS_NAME} -var MYSQL_DATABASE=${param.MYSQL_DB} -var MYSQL_ROOT_PASSWORD=${param.MYSQL_PASS} -auto-approve "
             }
+
         }
         stage('DB Metadata') {
             steps {
+                sh 'sleep 30'
                 sh 'aws ecs describe-tasks --region us-east-1 --cluster my_test_ecs --task $(jq -r .taskArns[0]) > output.json'
                 sh 'aws ecs describe-tasks --region us-east-1 --cluster my_test_ecs --task $(cat output.json | jq -r .taskArns[0]) > output.json'
                 sh 'cat output.json | jq -r .tasks[0].attachments[0].details[-1].value > dbPrivateIp.txt'
@@ -68,9 +74,13 @@ pipeline {
                 sh "docker push ${ECR_WS_REPOSITORY}/${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
             }
         }
-        stage('Deploy WS') {
+        stage('Prepare WS deploy') {
             steps {
                 sh "docker run --rm --volumes-from ${JENKINS_CONTAINER_NAME} hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/webserver init"
+            }
+        }
+        stage('Deploy WS') {
+            steps {
                 sh "docker run --rm --volumes-from ${JENKINS_CONTAINER_NAME} hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/webserver apply -var VPC_ID=${param.VPC_ID} -var ECS_NAME=${param.ECS_NAME} -auto-approve"
             }
         }
