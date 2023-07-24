@@ -2,7 +2,6 @@ pipeline {
     agent any
     
     environment {
-        AWS_ACCOUNT_ID        = '110828812774'
         AWS_REGION            = 'us-east-1'
         ECR_REPOSITORY        = 'public.ecr.aws/l5l8z6i3' 
         DOCKER_IMAGE_NAME     = 'panayadb' 
