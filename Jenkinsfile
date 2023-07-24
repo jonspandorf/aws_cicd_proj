@@ -32,7 +32,7 @@ pipeline {
         }
         stage('build image') {
             steps {
-                 sh "echo $pwd"
+                 sh "ls -lhtr"
                  sh "docker build -t ${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ./mysql"
             }
         }
