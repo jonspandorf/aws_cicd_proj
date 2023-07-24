@@ -32,7 +32,7 @@ pipeline {
         }
         stage('build image') {
             steps {
-                 sh "echo $PWD"
+                 sh "echo $pwd"
                  sh "docker build -t ${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ./mysql"
             }
         }
@@ -46,7 +46,7 @@ pipeline {
             steps {
                 sh "echo $PWD"
                 sh "docker run --rm --volumes-from ${JENKINS_CONTAINER_NAME} hashicorp/terraform -chdir=./mysql init"
-                sh "docker run --rm --volumes-from ${JENKINS_CONTAINER_NAME} $PWD hashicorp/terraform -chdir=./mysql apply -var VPC_ID=${param.VPC_ID} -var ECS_NAME=${param.ECS_NAME} -var MYSQL_DATABASE=${param.MYSQL_DB} -var MYSQL_ROOT_PASSWORD=${param.MYSQL_PASS} -auto-approve "
+                sh "docker run --rm --volumes-from ${JENKINS_CONTAINER_NAME} hashicorp/terraform -chdir=./mysql apply -var VPC_ID=${param.VPC_ID} -var ECS_NAME=${param.ECS_NAME} -var MYSQL_DATABASE=${param.MYSQL_DB} -var MYSQL_ROOT_PASSWORD=${param.MYSQL_PASS} -auto-approve "
             }
         }
         stage('DB Metadata') {
