@@ -46,7 +46,7 @@ pipeline {
             steps {
                 sh "ls -lhtra"
                 sh "docker run --rm -i --volumes-from ${JENKINS_CONTAINER_NAME} hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/mysql init"
-                sh "docker run --rm -i --volumes-from ${JENKINS_CONTAINER_NAME} -w $PWD hashicorp/terraform -chdir=$PWD/mysql apply -var VPC_ID=${param.VPC_ID} -var ECS_NAME=${param.ECS_NAME} -var MYSQL_DATABASE=${param.MYSQL_DB} -var MYSQL_ROOT_PASSWORD=${param.MYSQL_PASS} -auto-approve "
+                sh "docker run --rm -i --volumes-from ${JENKINS_CONTAINER_NAME} hashicorp/terraform -chdir/var/jenkins_home/workspace/my_deployment/mysql apply -var VPC_ID=${param.VPC_ID} -var ECS_NAME=${param.ECS_NAME} -var MYSQL_DATABASE=${param.MYSQL_DB} -var MYSQL_ROOT_PASSWORD=${param.MYSQL_PASS} -auto-approve "
             }
         }
         stage('DB Metadata') {
@@ -70,8 +70,8 @@ pipeline {
         }
         stage('Deploy WS') {
             steps {
-                sh "docker run --rm --volumes-from ${JENKINS_CONTAINER_NAME} -w /var/home_jenkins/workspace/my_deployment hashicorp/terraform -chdir=./webserver init"
-                sh "docker run --rm --volumes-from ${JENKINS_CONTAINER_NAME} -w /var/home_jenkins/workspace/my_deployment hashicorp/terraform -chdir=./webserver apply -var VPC_ID=${param.VPC_ID} -var ECS_NAME=${param.ECS_NAME} -auto-approve"
+                sh "docker run --rm --volumes-from ${JENKINS_CONTAINER_NAME} hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/webserver init"
+                sh "docker run --rm --volumes-from ${JENKINS_CONTAINER_NAME} hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/webserver apply -var VPC_ID=${param.VPC_ID} -var ECS_NAME=${param.ECS_NAME} -auto-approve"
             }
         }
     }
