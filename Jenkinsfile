@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('Checkout SCM') {
             steps {
-                git(["https://github.com/jonspandorf/panaya_project.git", branch: 'master'])
+                git "https://github.com/jonspandorf/panaya_project.git"
             }
         }
         stage('docker login') {
