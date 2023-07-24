@@ -45,8 +45,8 @@ pipeline {
         stage('Deploy DB') {
             steps {
                 sh "echo $PWD"
-                sh "docker run --rm -i --volumes-from ${JENKINS_CONTAINER_NAME} -w $PWD hashicorp/terraform -chdir=./mysql init"
-                sh "docker run --rm -i --volumes-from ${JENKINS_CONTAINER_NAME} -w $PWD hashicorp/terraform -chdir=./mysql apply -var VPC_ID=${param.VPC_ID} -var ECS_NAME=${param.ECS_NAME} -var MYSQL_DATABASE=${param.MYSQL_DB} -var MYSQL_ROOT_PASSWORD=${param.MYSQL_PASS} -auto-approve "
+                sh "docker run --rm -i -v ./mysql:/app -w /app hashicorp/terraform init"
+                sh "docker run --rm -i --volumes-from ${JENKINS_CONTAINER_NAME} -w $PWD hashicorp/terraform -chdir=$PWD/mysql apply -var VPC_ID=${param.VPC_ID} -var ECS_NAME=${param.ECS_NAME} -var MYSQL_DATABASE=${param.MYSQL_DB} -var MYSQL_ROOT_PASSWORD=${param.MYSQL_PASS} -auto-approve "
             }
         }
         stage('DB Metadata') {
