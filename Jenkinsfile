@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         AWS_ACCOUNT_ID        = '110828812774'
-        AWS_DEFAULT_REGION    = 'us-east-1'
+        AWS_REGION            = 'us-east-1'
         ECR_REPOSITORY        = 'public.ecr.aws/l5l8z6i3' 
         DOCKER_IMAGE_NAME     = 'panayadb' 
         DOCKER_IMAGE_TAG      = 'latest' 
@@ -17,7 +17,7 @@ pipeline {
         }
         stage('docker login') {
             steps {
-                sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ECR_REPOSITORY}"
+                sh "aws ecr-public get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin public.ecr.aws/l5l8z6i3"
             }
         }
         
