@@ -32,6 +32,7 @@ pipeline {
         }
         stage('build image') {
             steps {
+                 sh "echo $PWD"
                  sh "docker build -t ${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ./mysql"
             }
         }
