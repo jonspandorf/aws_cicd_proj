@@ -82,7 +82,7 @@ pipeline {
         }
         stage('Deploy WS') {
             steps {
-                sh "docker run --rm --volumes-from ${JENKINS_CONTAINER_NAME} hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/webserver apply -var VPC_ID=${param.VPC_ID} -var ECS_NAME=${param.ECS_NAME} -auto-approve"
+                sh "docker run --rm --volumes-from ${JENKINS_CONTAINER_NAME} hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/webserver apply -auto-approve"
             }
         }
     }
