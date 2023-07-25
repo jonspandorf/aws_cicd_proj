@@ -1,7 +1,3 @@
-variable "VPC_ID" {}
-
-variable "ECS_NAME" {}
-
 
 module "deploy_server"  {
     source = "github.com/jonspandorf/terraform_modules//ecs_task_def"

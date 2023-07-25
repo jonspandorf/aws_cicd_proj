@@ -1,10 +1,3 @@
-variable "VPC_ID" {}
-
-variable "ECS_NAME" {}
-
-variable "MYSQL_DATABASE" {}
-
-variable "MYSQL_ROOT_PASSWORD" {}
 
 module "deploy_db" {
     source = "github.com/jonspandorf/terraform_modules//ecs_task_def"
