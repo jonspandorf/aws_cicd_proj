@@ -9,8 +9,8 @@ variable "MYSQL_ROOT_PASSWORD" {}
 module "deploy_db" {
     source = "github.com/jonspandorf/terraform_modules//ecs_task_def"
     is_public_deployment = false
-    vpc_id = "${var.VPC_ID}"
-    requested_ecs = "${var.ECS_NAME}"
+    vpc_id = "vpc-0d80222967edc166e"
+    requested_ecs = "my_test_ecs"
     ecr_image_url = "public.ecr.aws/l5l8z6i3/panayadb"
     container_name = "panaya_db"
     ecs_task_port = 3306
@@ -26,11 +26,11 @@ module "deploy_db" {
     container_env = [
                         {
                             "name": "MYSQL_DATABASE",
-                            "value": "${var.MYSQL_DATABASE}"
+                            "value": "panayadb"
                         },
                         {
                             "name": "MYSQL_ROOT_PASSWORD",
-                            "value": "${var.MYSQL_ROOT_PASSWORD}"
+                            "value": "supersecret"
                         }
                     ]
 }
