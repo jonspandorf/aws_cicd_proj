@@ -45,19 +45,19 @@ pipeline {
         stage('Prepare DB deploy') {
             steps {
                 sh "ls -lhtra"
-                sh "docker run --rm -i --volumes-from ${JENKINS_CONTAINER_NAME} hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/mysql init"
+                sh "docker run --rm -i -v $PWD/mysql:/template -w /template hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/mysql init"
             }
         }
         stage('Deploy DB') {
             steps {
                 sh 'sleep 10'
-                sh "docker run --name tf_deploy --rm -i --volumes-from ${JENKINS_CONTAINER_NAME} hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/mysql apply -auto-approve"
+                sh "docker run --name tf_deploy --rm -i -v $PWD/webserver:/template -w /template  hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/mysql apply -auto-approve"
             }
 
         }
         stage('DB Metadata') {
             steps {
-                sh 'sleep 30'
+                sh 'sleep 10'
                 sh 'aws ecs describe-tasks --region us-east-1 --cluster my_test_ecs --task $(jq -r .taskArns[0]) > output.json'
                 sh 'aws ecs describe-tasks --region us-east-1 --cluster my_test_ecs --task $(cat output.json | jq -r .taskArns[0]) > output.json'
                 sh 'cat output.json | jq -r .tasks[0].attachments[0].details[-1].value > dbPrivateIp.txt'
@@ -66,6 +66,8 @@ pipeline {
         }
         stage('Build Webserver') {
             steps {
+
+		sh 'aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/l5l8z6i3'
                 sh 'docker build -t ${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG} --build-arg MYSQL_DB=$(cat dbPrivateIp.txt) --build-arg MYSQL_USER=${MYSQL_USER} --build-arg MYSQL_PASS=${MYSQL_PASS} --build-arg MYSQL_DB=${MYSQL_DB} ./webserver'
             }
         }
@@ -77,12 +79,12 @@ pipeline {
         }
         stage('Prepare WS deploy') {
             steps {
-                sh "docker run --rm --volumes-from ${JENKINS_CONTAINER_NAME} hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/webserver init"
+                sh "docker run --rm -v $PWD/webserver:/template -w /template hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/webserver init"
             }
         }
         stage('Deploy WS') {
             steps {
-                sh "docker run --rm --volumes-from ${JENKINS_CONTAINER_NAME} hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/webserver apply -auto-approve"
+                sh "docker run --rm -v $PWD/webserver:/template -w /template  hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/webserver apply -auto-approve"
             }
         }
     }
