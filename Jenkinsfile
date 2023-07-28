@@ -11,8 +11,7 @@ pipeline {
     
     environment {
         AWS_REGION             = 'us-east-1'
-        ECR_DB_REPOSITORY      = 'public.ecr.aws/l5l8z6i3' 
-        ECR_WS_REPOSITORY      = 'public.ecr.aws/l5l8z6i3/panayadb:latest'
+        ECR_PUBLIC_REPOSITORY  = 'public.ecr.aws/l5l8z6i3' 
         DOCKER_DB_IMAGE_NAME   = 'panayadb' 
         DOCKER_WS_IMAGE_NAME   = 'panaya_frontend'
         DOCKER_IMAGE_TAG       = 'latest' 
@@ -38,8 +37,8 @@ pipeline {
         }
         stage('ECR Tag and push') {
             steps {
-                sh "docker tag ${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${ECR_DB_REPOSITORY}/${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
-                sh "docker push ${ECR_DB_REPOSITORY}/${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+                sh "docker tag ${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${ECR_PUBLIC_REPOSITORY}/${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+                sh "docker push ${ECR_PUBLIC_REPOSITORY}/${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
             }
         }
         stage('Prepare DB deploy') {
@@ -64,8 +63,8 @@ pipeline {
         }
         stage('Webserver Tag and push') {
             steps {
-                sh "docker tag ${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${ECR_WS_REPOSITORY}/${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
-                sh "docker push ${ECR_WS_REPOSITORY}/${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+                sh "docker tag ${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${ECR_PUBLIC_REPOSITORY}/${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+                sh "docker push ${ECR_PUBLIC_REPOSITORY}/${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
             }
         }
         stage('Deploy Webserver') {
