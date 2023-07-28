@@ -44,16 +44,8 @@ pipeline {
         }
         stage('Prepare DB deploy') {
             steps {
-                sh "ls -lhtra"
-                sh "docker run --rm -i -v $PWD/mysql:/template -w /template hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/mysql init"
+                sh "docker-compose run mysql_deploy"
             }
-        }
-        stage('Deploy DB') {
-            steps {
-                sh 'sleep 10'
-                sh "docker run --name tf_deploy --rm -i -v $PWD/webserver:/template -w /template  hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/mysql apply -auto-approve"
-            }
-
         }
         stage('DB Metadata') {
             steps {
@@ -77,14 +69,9 @@ pipeline {
                 sh "docker push ${ECR_WS_REPOSITORY}/${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
             }
         }
-        stage('Prepare WS deploy') {
+        stage('Deploy Webserver') {
             steps {
-                sh "docker run --rm -v $PWD/webserver:/template -w /template hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/webserver init"
-            }
-        }
-        stage('Deploy WS') {
-            steps {
-                sh "docker run --rm -v $PWD/webserver:/template -w /template  hashicorp/terraform -chdir=/var/jenkins_home/workspace/my_deployment/webserver apply -auto-approve"
+                sh 'docker-compose run webserver_deploy'
             }
         }
     }

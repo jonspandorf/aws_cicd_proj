@@ -1,34 +1,43 @@
 version: "3.8"
 services: 
-  panayadb:
-    image: panayadb
-    hostname: panayadb
+  mysql_init:
+    image: hashicorp/terraform
+    volumes:
+    - ./mysql:/template
+    working_dir: /template 
+    command: init
+  
+  mysql_deploy:
+    image: hashicorp/terraform 
+    volumes:
+    - ./mysql:/template
+    working_dir: /template 
     environment:
-      - MYSQL_ROOT_PASSWORD="secretpass"
-      - MYSQL_DATABASE="panaya"
-    networks:
-      - app-network
-    healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-      timeout: 20s
-      retries: 10
-      
-  webserver:
-    build: 
-      context: ./webserver
-      args:
-      - MYSQL_HOST=panayadb
-      - MYSQL_USER=root
-      - MYSQL_PASS=secretpass
-      - MYSQL_DB=panaya
-    hostname: panayaserver
-    ports:
-    - "8080:80"
+      - TF_VAR_MYSQL_DATABASE=$MYSQL_DB
+      - TF_VAR_MYSQL_ROOT_PASSWORD=$MYSQL_PASS
+      - TF_VAR_ECS_NAME=$ECS_NAME 
+      - TF_VAR_VPC_ID=$VPC_ID
+    command: apply -auto-approve
     depends_on:
-      panayadb:
-        condition: service_healthy
-    networks:
-      - app-network
-networks:
-  app-network:
-    driver: bridge
+      mysql_init:
+        condition: service_completed_successfully
+      
+  webserver_init:
+    image: hashicorp/terraform
+    volumes:
+    - ./webserver:/template
+    working_dir: /template 
+    command: init
+  
+  webserver_deploy:
+    image: hashicorp/terraform 
+    volumes:
+    - ./webserver:/template
+    working_dir: /template 
+    command: apply -auto-approve
+    environment:
+      - TF_VAR_ECS_NAME=$ECS_NAME 
+      - TF_VAR_VPC_ID=$VPC_ID
+    depends_on:
+      webserver_init:
+        condition: service_completed_successfully
