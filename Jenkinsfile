@@ -13,7 +13,7 @@ pipeline {
         AWS_REGION             = 'us-east-1'
         ECR_PUBLIC_REPOSITORY  = 'public.ecr.aws/l5l8z6i3' 
         DOCKER_DB_IMAGE_NAME   = 'panayadb' 
-        DOCKER_WS_IMAGE_NAME   = 'panaya_frontend'
+        DOCKER_WS_IMAGE_NAME   = 'panaya_webserver'
         DOCKER_IMAGE_TAG       = 'latest' 
         JENKINS_CONTAINER_NAME = 'sweet_ganguly' 
     }
