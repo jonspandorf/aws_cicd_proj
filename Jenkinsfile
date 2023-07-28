@@ -44,7 +44,7 @@ pipeline {
         }
         stage('Prepare DB deploy') {
             steps {
-                sh "docker-compose run mysql_deploy"
+                sh "docker compose run mysql_deploy"
             }
         }
         stage('DB Metadata') {
@@ -71,7 +71,7 @@ pipeline {
         }
         stage('Deploy Webserver') {
             steps {
-                sh 'docker-compose run webserver_deploy'
+                sh 'docker compose run webserver_deploy'
             }
         }
     }
