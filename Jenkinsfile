@@ -58,9 +58,8 @@ pipeline {
         }
         stage('Build Webserver') {
             steps {
-
-		sh 'aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/l5l8z6i3'
-                sh 'docker build -t ${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG} --build-arg MYSQL_DB=$(cat dbPrivateIp.txt) --build-arg MYSQL_USER=${MYSQL_USER} --build-arg MYSQL_PASS=${MYSQL_PASS} --build-arg MYSQL_DB=${MYSQL_DB} ./webserver'
+		        sh 'aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/l5l8z6i3'
+                sh 'docker build -t ${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG} --build-arg MYSQL_HOST=$(cat dbPrivateIp.txt) --build-arg MYSQL_USER=${MYSQL_USER} --build-arg MYSQL_PASS=${MYSQL_PASS} --build-arg MYSQL_DB=${MYSQL_DB} ./webserver'
             }
         }
         stage('Webserver Tag and push') {
