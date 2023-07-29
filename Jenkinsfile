@@ -15,7 +15,7 @@ pipeline {
         DOCKER_DB_IMAGE_NAME   = 'panayadb' 
         DOCKER_WS_IMAGE_NAME   = 'panaya_webserver'
         DOCKER_IMAGE_TAG       = 'latest' 
-        MYSQL_HOSTNAME             = ''
+        MYSQL_HOSTNAME         = ''
     }
     
     stages {
@@ -57,7 +57,7 @@ pipeline {
         }
         stage('Build and pushWebserver') {
             steps {
-                sh 'MYSQL_HOSTNAME=$(cat dbPrivateIp.txt)'
+                withEnv(["MYSQL_HOSTNAME=$(cat dbPrivateIp.txt)"])
                 sh 'docker compose -f docker-compose-build.yaml build frontend_image'
                 sh 'docker compose -f docker-compose-build.yaml push frontend_image'
                 sh 'rm dbPrivateIp.txt'
