@@ -9,10 +9,8 @@ services:
   frontend_image: 
     build:
       context: ./webserver 
-      extra_hosts: 
-      - "panayadb:$MYSQL_HOST"
       args:
-        - MYSQL_HOST=panayadb
+        - MYSQL_HOST=$MYSQL_HOSTNAME
         - MYSQL_USER=$MYSQL_USER
         - MYSQL_PASS=$MYSQL_PASS
         - MYSQL_DB=$MYSQL_DB
