@@ -55,9 +55,10 @@ pipeline {
                 sh 'rm output.json'
             }
         }
-        stage('Build and pushWebserver') {
+        stage('Build and push Webserver') {
             steps {
-                withEnv(["MYSQL_HOSTNAME=$(cat dbPrivateIp.txt)"])
+                sh 'container_host=$(cat dbPrivateIp.txt)'
+                withEnv(["MYSQL_HOSTNAME=${container_host}"])
                 sh 'docker compose -f docker-compose-build.yaml build frontend_image'
                 sh 'docker compose -f docker-compose-build.yaml push frontend_image'
                 sh 'rm dbPrivateIp.txt'
