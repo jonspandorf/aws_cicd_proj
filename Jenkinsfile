@@ -57,11 +57,13 @@ pipeline {
         }
         stage('Build push Webserver') {
             steps {
-                sh 'container_host=$(cat dbPrivateIp.txt)'
-                withEnv(["MYSQL_HOSTNAME=\$container_host"])
-                sh 'docker compose -f docker-compose-build.yaml build frontend_image'
-                sh 'docker compose -f docker-compose-build.yaml push frontend_image'
-                sh 'rm dbPrivateIp.txt'
+                script {
+                    def container_host = sh(returnStdout: true, script: "cat dbPrivateIp.txt").trim()
+                    withEnv(["MYSQL_HOSTNAME=${container_host}"])
+                    sh 'docker compose -f docker-compose-build.yaml build frontend_image'
+                    sh 'docker compose -f docker-compose-build.yaml push frontend_image'
+                    sh 'rm dbPrivateIp.txt'
+                }
             }
         }
         // stage('Webserver Tag and push') {
