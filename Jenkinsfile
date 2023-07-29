@@ -15,6 +15,7 @@ pipeline {
         DOCKER_DB_IMAGE_NAME   = 'panayadb' 
         DOCKER_WS_IMAGE_NAME   = 'panaya_webserver'
         DOCKER_IMAGE_TAG       = 'latest' 
+        MYSQL_HOST             = ''
     }
     
     stages {
