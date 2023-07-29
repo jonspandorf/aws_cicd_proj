@@ -34,12 +34,6 @@ pipeline {
                  sh "docker compose -f docker-compose-build.yaml push panayadb_image"
             }
         }
-        // stage('ECR Tag and push') {
-        //     steps {
-        //         sh "docker tag ${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${ECR_PUBLIC_REPOSITORY}/${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
-        //         sh "docker push ${ECR_PUBLIC_REPOSITORY}/${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
-        //     }
-        // }
         stage('Deploy DB') {
             steps {
                 sh "docker compose run mysql_deploy"
@@ -65,12 +59,6 @@ pipeline {
 
             }
         }
-        // stage('Webserver Tag and push') {
-        //     steps {
-        //         sh "docker tag ${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${ECR_PUBLIC_REPOSITORY}/${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
-        //         sh "docker push ${ECR_PUBLIC_REPOSITORY}/${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
-        //     }
-        // }
         stage('Deploy Webserver') {
             steps {
                 sh 'docker compose run webserver_deploy'
