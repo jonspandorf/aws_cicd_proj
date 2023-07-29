@@ -4,7 +4,7 @@ services:
   panayadb_image:
     build: 
       context: ./mysql 
-      image: ${ECR_PUBLIC_REPOSITORY}/${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
+    image: ${ECR_PUBLIC_REPOSITORY}/${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
 
   frontend_image: 
     build:
@@ -16,4 +16,4 @@ services:
         - MYSQL_USER=$MYSQL_USER
         - MYSQL_PASS=$MYSQL_PASS
         - MYSQL_DB=$MYSQL_DB
-      image: ${ECR_PUBLIC_REPOSITORY}/${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
+    image: ${ECR_PUBLIC_REPOSITORY}/${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
