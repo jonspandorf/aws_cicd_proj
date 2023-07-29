@@ -15,7 +15,6 @@ pipeline {
         DOCKER_DB_IMAGE_NAME   = 'panayadb' 
         DOCKER_WS_IMAGE_NAME   = 'panaya_webserver'
         DOCKER_IMAGE_TAG       = 'latest' 
-        JENKINS_CONTAINER_NAME = 'sweet_ganguly' 
     }
     
     stages {
@@ -29,18 +28,18 @@ pipeline {
                 sh "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/l5l8z6i3"
             }
         }
-        stage('build image') {
+        stage('build image and push image') {
             steps {
-                 sh "ls -lhtr"
-                 sh "docker build -t ${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ./mysql"
+                 sh "docker compose -f docker-compose-build.yaml build panayadb_image"
+                 sh "docker compose -f docker-compose-build.yaml push panayadb_image"
             }
         }
-        stage('ECR Tag and push') {
-            steps {
-                sh "docker tag ${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${ECR_PUBLIC_REPOSITORY}/${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
-                sh "docker push ${ECR_PUBLIC_REPOSITORY}/${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
-            }
-        }
+        // stage('ECR Tag and push') {
+        //     steps {
+        //         sh "docker tag ${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${ECR_PUBLIC_REPOSITORY}/${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+        //         sh "docker push ${ECR_PUBLIC_REPOSITORY}/${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+        //     }
+        // }
         stage('Prepare DB deploy') {
             steps {
                 sh "docker compose run mysql_deploy"
@@ -55,18 +54,18 @@ pipeline {
                 sh 'rm output.json'
             }
         }
-        stage('Build Webserver') {
+        stage('Build and pushWebserver') {
             steps {
-		        sh 'aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/l5l8z6i3'
-                sh 'docker build -t ${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG} --build-arg MYSQL_HOST=$(cat dbPrivateIp.txt) --build-arg MYSQL_USER=${MYSQL_USER} --build-arg MYSQL_PASS=${MYSQL_PASS} --build-arg MYSQL_DB=${MYSQL_DB} ./webserver'
+                sh 'docker compose -f docker-compose-build.yaml build frontend_image'
+                sh 'docker compose -f docker-compose-build.yaml push frontend_image'
             }
         }
-        stage('Webserver Tag and push') {
-            steps {
-                sh "docker tag ${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${ECR_PUBLIC_REPOSITORY}/${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
-                sh "docker push ${ECR_PUBLIC_REPOSITORY}/${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
-            }
-        }
+        // stage('Webserver Tag and push') {
+        //     steps {
+        //         sh "docker tag ${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ${ECR_PUBLIC_REPOSITORY}/${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+        //         sh "docker push ${ECR_PUBLIC_REPOSITORY}/${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+        //     }
+        // }
         stage('Deploy Webserver') {
             steps {
                 sh 'docker compose run webserver_deploy'
