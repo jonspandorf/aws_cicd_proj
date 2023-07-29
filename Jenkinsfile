@@ -56,7 +56,8 @@ pipeline {
         }
         stage('Build push Webserver') {
             steps {
-                def dockerComposeCmd = "MYSQL_HOST=$(cat dbPrivateIp.txt) docker compose -f docker-compose-build.yaml build frontend_image"
+                def container_host = sh(returnStdout: true, script: "cat dbPrivateIp.txt").trim()
+                def dockerComposeCmd = "MYSQL_HOST=${container_host} docker compose -f docker-compose-build.yaml build frontend_image"
                 sh 'docker compose -f docker-compose-build.yaml push frontend_image'
                 sh 'rm dbPrivateIp.txt'
             }
