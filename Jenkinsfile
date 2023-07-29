@@ -50,14 +50,16 @@ pipeline {
                 sh 'sleep 30'
                 sh 'aws ecs list-tasks --region us-east-1 --cluster my_test_ecs > output.json'
                 sh 'aws ecs describe-tasks --region us-east-1 --cluster my_test_ecs --task $(cat output.json | jq -r .taskArns[0]) > output.json'
-                sh 'export MYSQL_HOST = $(cat output.json | jq -r .tasks[0].attachments[0].details[-1].value)'
+                sh 'cat output.json | jq -r .tasks[0].attachments[0].details[-1].value > dbPrivateIp.txt'
                 sh 'rm output.json'
             }
         }
         stage('Build and pushWebserver') {
             steps {
+                sh 'export MYSQL_HOST=$(cat dbPrivateIp.txt)'
                 sh 'docker compose -f docker-compose-build.yaml build frontend_image'
                 sh 'docker compose -f docker-compose-build.yaml push frontend_image'
+                sh 'rm dbPrivateIp.txt'
             }
         }
         // stage('Webserver Tag and push') {
