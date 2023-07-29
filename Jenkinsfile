@@ -29,7 +29,7 @@ pipeline {
                 sh "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/l5l8z6i3"
             }
         }
-        stage('build image and push image') {
+        stage('build image and push db image') {
             steps {
                  sh "docker compose -f docker-compose-build.yaml build panayadb_image"
                  sh "docker compose -f docker-compose-build.yaml push panayadb_image"
@@ -41,7 +41,7 @@ pipeline {
         //         sh "docker push ${ECR_PUBLIC_REPOSITORY}/${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
         //     }
         // }
-        stage('Prepare DB deploy') {
+        stage('Deploy DB') {
             steps {
                 sh "docker compose run mysql_deploy"
             }
@@ -57,7 +57,7 @@ pipeline {
         }
         stage('Build and push Webserver') {
             steps {
-                sh 'container_host=$(cat dbPrivateIp.txt)'
+                def container_host=sh(script:'cat dbPrivateIp.txt')
                 withEnv(["MYSQL_HOSTNAME=${container_host}"])
                 sh 'docker compose -f docker-compose-build.yaml build frontend_image'
                 sh 'docker compose -f docker-compose-build.yaml push frontend_image'
