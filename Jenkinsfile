@@ -57,6 +57,7 @@ pipeline {
         stage('Build and pushWebserver') {
             steps {
                 sh 'export MYSQL_HOST=$(cat dbPrivateIp.txt)'
+                sh 'sleep 5'
                 sh 'docker compose -f docker-compose-build.yaml build frontend_image'
                 sh 'docker compose -f docker-compose-build.yaml push frontend_image'
                 sh 'rm dbPrivateIp.txt'
