@@ -10,6 +10,7 @@ services:
     build:
       context: ./webserver 
       args:
+        - MYSQL_HOST=${MYSQL_HOST}
         - MYSQL_USER=${MYSQL_USER}
         - MYSQL_PASS=${MYSQL_PASS}
         - MYSQL_DB=${MYSQL_DB}
