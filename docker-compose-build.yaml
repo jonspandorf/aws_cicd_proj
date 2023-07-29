@@ -10,8 +10,8 @@ services:
     build:
       context: ./webserver 
       args:
-        - MYSQL_HOST=$MYSQL_HOSTNAME
-        - MYSQL_USER=$MYSQL_USER
-        - MYSQL_PASS=$MYSQL_PASS
-        - MYSQL_DB=$MYSQL_DB
+        - MYSQL_HOST=${MYSQL_HOSTNAME}
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_PASS=${MYSQL_PASS}
+        - MYSQL_DB=${MYSQL_DB}
     image: ${ECR_PUBLIC_REPOSITORY}/${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
