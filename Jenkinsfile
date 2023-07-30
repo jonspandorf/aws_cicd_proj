@@ -57,7 +57,7 @@ pipeline {
             steps {
                 script {
                     def container_port = sh(returnStdout: true, script: "cat dbPrivateIp.txt").trim()
-                    withEnv([MYSQL_HOST=${container_port}]) {
+                    withEnv(["MYSQL_HOST=${container_port}"]) {
                         sh 'docker compose -f docker-compose-build.yaml build frontend_image'
                         sh 'docker compose -f docker-compose-build.yaml push frontend_image'
                         sh 'rm dbPrivateIp.txt'
