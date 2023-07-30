@@ -42,17 +42,21 @@ pipeline {
         }
         stage('Get DB Hostname') {
             steps {
-                sh 'sleep 30'
-                sh 'aws ecs list-tasks --region us-east-1 --cluster my_test_ecs > output.json'
-                sh 'aws ecs describe-tasks --region us-east-1 --cluster my_test_ecs --task $(cat output.json | jq -r .taskArns[0]) > output.json'
-                sh 'cat output.json | jq -r .tasks[0].attachments[0].details[-1].value > dbPrivateIp.txt'
-                sh 'rm output.json'
+                script {
+                    sh 'sleep 30'
+                    sh 'aws ecs list-tasks --region us-east-1 --cluster my_test_ecs > output.json'
+                    sh 'aws ecs describe-tasks --region us-east-1 --cluster my_test_ecs --task $(cat output.json | jq -r .taskArns[0]) > output.json'
+                    sh 'cat output.json | jq -r .tasks[0].attachments[0].details[-1].value > dbPrivateIp.txt'
+                    sh 'rm output.json'
+                    env.MYSQL_HOST = sh returnStdout: true, script: """ cat dbPrivateIp.txt """
+
+                }
+
             }
         }
         stage('Build push Webserver') {
             steps {
                 script {
-                    env.MYSQL_HOST = sh(returnStdout: true, script: "cat dbPrivateIp.txt").trim()
                     sh 'docker compose -f docker-compose-build.yaml build frontend_image'
                     sh 'docker compose -f docker-compose-build.yaml push frontend_image'
                     sh 'rm dbPrivateIp.txt'
