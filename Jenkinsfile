@@ -24,15 +24,11 @@ pipeline {
                 git "https://github.com/jonspandorf/panaya_project.git"
             }
         }
-        stage('docker login') {
+        stage('Build Db') {
             steps {
-                sh "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/l5l8z6i3"
-            }
-        }
-        stage('build push db image') {
-            steps {
-                 sh "docker compose -f docker-compose-build.yaml build panayadb_image"
-                 sh "docker compose -f docker-compose-build.yaml push panayadb_image"
+                 sh "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/l5l8z6i3"
+                 sh "docker compose -f docker-compose-build.yaml build panaya_db_image"
+                 sh "docker compose -f docker-compose-build.yaml push panaya_db_image"
             }
         }
         stage('Deploy DB') {
@@ -40,7 +36,7 @@ pipeline {
                 sh "docker compose run mysql_deploy"
             }
         }
-        stage('Get DB Hostname') {
+        stage('Get DB ip') {
             steps {
                 script {
                     sh 'sleep 30'
@@ -48,25 +44,22 @@ pipeline {
                     sh 'aws ecs describe-tasks --region us-east-1 --cluster my_test_ecs --task $(cat output.json | jq -r .taskArns[0]) > output.json'
                     sh 'cat output.json | jq -r .tasks[0].attachments[0].details[-1].value > dbPrivateIp.txt'
                     sh 'rm output.json'
-
                 }
-
             }
         }
-        stage('Build push Webserver') {
+        stage('Build frontend') {
             steps {
                 script {
-                    def container_port = sh(returnStdout: true, script: "cat dbPrivateIp.txt").trim()
-                    withEnv(["MYSQL_HOST=${container_port}"]) {
-                        sh 'docker compose -f docker-compose-build.yaml build frontend_image'
-                        sh 'docker compose -f docker-compose-build.yaml push frontend_image'
+                    def container_ip = sh(returnStdout: true, script: "cat dbPrivateIp.txt").trim()
+                    withEnv(["MYSQL_HOST=${container_ip}"]) {
+                        sh 'docker compose -f docker-compose-build.yaml build panaya_frontend_image'
+                        sh 'docker compose -f docker-compose-build.yaml push panaya_frontend_image'
                         sh 'rm dbPrivateIp.txt'
                     }
                 }
-
             }
         }
-        stage('Deploy Webserver') {
+        stage('Deploy frontend') {
             steps {
                 sh 'docker compose run webserver_deploy'
             }
