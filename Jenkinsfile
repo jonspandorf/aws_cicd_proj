@@ -39,7 +39,7 @@ pipeline {
         stage('Get DB ip') {
             steps {
                 script {
-                    sh 'sleep 30'
+                    sh 'sleep 60'
                     sh 'aws ecs list-tasks --region us-east-1 --cluster my_test_ecs > output.json'
                     sh 'aws ecs describe-tasks --region us-east-1 --cluster my_test_ecs --task $(cat output.json | jq -r .taskArns[0]) > output.json'
                     sh 'cat output.json | jq -r .tasks[0].attachments[0].details[-1].value > dbPrivateIp.txt'
