@@ -17,6 +17,8 @@ services:
       - TF_VAR_MYSQL_ROOT_PASSWORD=$MYSQL_PASS
       - TF_VAR_ECS_NAME=$ECS_NAME 
       - TF_VAR_VPC_ID=$VPC_ID
+      - TF_VAR_JENKINS_SG=$JENKINS_SG
+      - TF_VAR_ECR_URL=${ECR_PUBLIC_REPOSITORY}/${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
     command: apply -auto-approve
     depends_on:
       mysql_init:
@@ -38,6 +40,7 @@ services:
     environment:
       - TF_VAR_ECS_NAME=$ECS_NAME 
       - TF_VAR_VPC_ID=$VPC_ID
+      - TF_VAR_ECR_URL=${ECR_PUBLIC_REPOSITORY}/${DOCKER_WS_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
     depends_on:
       webserver_init:
         condition: service_completed_successfully

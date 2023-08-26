@@ -2,18 +2,20 @@ variable "VPC_ID" {}
 
 variable "ECS_NAME" {}
 
+variable "ECR_URL" {}
+
 
 module "deploy_server"  {
     source = "github.com/jonspandorf/terraform_modules//ecs_task_def"
     vpc_id = var.VPC_ID
     requested_ecs = var.ECS_NAME
-    ecr_image_url = "public.ecr.aws/l5l8z6i3/panaya_webserver"
-    container_name = "panaya_webserver"
+    ecr_image_url = var.ECR_URL
+    container_name = "frontend_container"
     ecs_task_port = 80
-    public_endpoint_ports = [9080,9080]
-    task_role_name = "PanayaServerTask"
-    service_name = "panaya-service"
+    public_endpoint_ports = [80,80]
+    task_role_name = "MySpecialFrontendRole"
+    service_name = "frontend-service"
     service_container_count = 2
-    loadbalancer_name = "panaya-lb"
+    loadbalancer_name = "my-cool-lb"
 }
 
