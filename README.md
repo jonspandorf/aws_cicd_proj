@@ -4,7 +4,7 @@ This project deploys a Database container and a webserver from an AWS Managed Je
 
 Technology stack: Jenkins, Docker, Terraform
 
-![alt text]('./app_infrastructure.png)
+![alt text]('app_infrastructure.png)
 
 Assuming Jenkins has the required permissions
 
