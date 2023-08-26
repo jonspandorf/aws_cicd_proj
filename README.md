@@ -1,6 +1,8 @@
-# panaya_project
+# CI/CD Project on AWS
 
 This project deploys a Database container and a webserver from an AWS Managed Jenkins server. 
+
+Technology stack: Jenkins, Docker, Terraform
 
 Assuming Jenkins has the required permissions
 
