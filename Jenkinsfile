@@ -7,28 +7,23 @@ pipeline {
         string(name: 'MYSQL_DB', defaultValue: 'your-mysql-db', description: 'The name of the MySQL database')
         string(name: 'MYSQL_USER', defaultValue: 'your-mysql-user', description: 'The MySQL user')
         string(name: 'MYSQL_PASS', defaultValue: 'your-mysql-pass', description: 'The MySQL password')
+        string(name: 'ECR_PUBLIC_REPOSITORY',defaultValue:'public.ecr.aws/has',description:'The ECR Public repo')
     }
     
     environment {
         AWS_REGION             = 'us-east-1'
-        ECR_PUBLIC_REPOSITORY  = 'public.ecr.aws/l5l8z6i3' 
-        DOCKER_DB_IMAGE_NAME   = 'panayadb' 
-        DOCKER_WS_IMAGE_NAME   = 'panaya_webserver'
+        DOCKER_DB_IMAGE_NAME   = 'cicd_db_image' 
+        DOCKER_WS_IMAGE_NAME   = 'cicd_frontend_image'
         DOCKER_IMAGE_TAG       = 'latest' 
         MYSQL_HOST             = ''
     }
     
     stages {
-        stage('Checkout SCM') {
-            steps {
-                git "https://github.com/jonspandorf/panaya_project.git"
-            }
-        }
         stage('Build Db') {
             steps {
                  sh "aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/l5l8z6i3"
-                 sh "docker compose -f docker-compose-build.yaml build panaya_db_image"
-                 sh "docker compose -f docker-compose-build.yaml push panaya_db_image"
+                 sh "docker compose -f docker-compose-build.yaml build db_app"
+                 sh "docker compose -f docker-compose-build.yaml push db_app"
             }
         }
         stage('Deploy DB') {
@@ -52,8 +47,8 @@ pipeline {
                 script {
                     def container_ip = sh(returnStdout: true, script: "cat dbPrivateIp.txt").trim()
                     withEnv(["MYSQL_HOST=${container_ip}"]) {
-                        sh 'docker compose -f docker-compose-build.yaml build panaya_frontend_image'
-                        sh 'docker compose -f docker-compose-build.yaml push panaya_frontend_image'
+                        sh 'docker compose -f docker-compose-build.yaml build webserver_app'
+                        sh 'docker compose -f docker-compose-build.yaml push webserver_app'
                         sh 'rm dbPrivateIp.txt'
                     }
                 }

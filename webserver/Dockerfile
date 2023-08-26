@@ -1,4 +1,4 @@
-#Stage 1 - Flask builder
+#Stage 1 - Python Jinja builder
 FROM python:3.9-slim-buster AS builder 
 
 RUN pip install jinja2 mysql-connector-python

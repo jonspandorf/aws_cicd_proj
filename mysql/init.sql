@@ -18,16 +18,16 @@ CREATE TABLE IF NOT EXISTS As_project (
     FOREIGN KEY (Account_id) REFERENCES As_account(Id)
 );
 
-INSERT INTO As_company (Id, Name) VALUES (123, 'Panaya');
+INSERT INTO As_company (Id, Name) VALUES (123, 'MyCompany');
 INSERT INTO As_account (Id, Name, Company_id) 
 VALUES 
- (111, "Production system", 123),
- (222, "Dev system", 123);
+ (111, "Engineering", 123),
+ (222, "QA", 123);
 INSERT INTO As_project (Id, Name, Account_id, Status)
 VALUES 
  (1111,"Upgrade",111,1),
- (2222,"Testing",111,0),
+ (2222,"Testing",222,0),
  (3333,"Cleansing",111,2),
- (4444,"Restore",222,1);
+ (4444,"Restore",111,1);
 
 

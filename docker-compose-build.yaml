@@ -1,12 +1,12 @@
 version: '3.8'
 services:
 
-  panaya_db_image:
+  db_app:
     build: 
       context: ./mysql 
     image: ${ECR_PUBLIC_REPOSITORY}/${DOCKER_DB_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
 
-  panaya_frontend_image: 
+  webserver_app: 
     build:
       context: ./webserver 
       args:
